@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure UPI Pay</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; text-align: center; background: #f3f4f6; padding: 40px 15px; margin: 0; }
+        .card { background: white; padding: 30px 20px; border-radius: 16px; max-width: 360px; margin: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; }
+        .logo { font-size: 20px; font-weight: bold; color: #1e3a8a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .amount { font-size: 36px; font-weight: 800; color: #059669; margin: 15px 0; }
+        .btn { display: block; background: #2563eb; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; margin: 20px 0; transition: background 0.2s; }
+        .btn:hover { background: #1d4ed8; }
+        .qr-box { background: #f9fafb; padding: 15px; border-radius: 12px; border: 1px dashed #d1d5db; display: inline-block; margin-top: 10px; }
+        .info-text { font-size: 13px; color: #6b7280; line-height: 1.4; margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="logo">🔒 Secure Pay Now</div>
+        <p class="info-text">Paying to UPI ID:<br><strong id="upi-id" style="color: #1f2937;">...</strong></p>
+        <div class="amount" id="amt">₹0</div>
+        
+        <!-- Mobile users ke liye direct payment button -->
+        <a href="#" id="pay-btn" class="btn">Pay via UPI App</a>
+        
+        <!-- Laptop/Desktop browsers ke liye Auto QR Code -->
+        <div class="qr-box">
+            <p class="info-text" style="font-weight: 500;">Desktop / Browser User:<br>Scan this QR via GPay, PhonePe, or Paytm</p>
+            <img id="qr-img" src="" width="200" height="200" alt="Loading QR...">
+        </div>
+    </div>
+
+    <script>
+        // Browser URL se details automatic nikalne ke liye script
+        const params = new URLSearchParams(window.location.search);
+        
+        // Agar URL mein data nahi hoga toh ye default values lega
+        const upi = params.get('upi') || 'lt1098138@okicici';
+        const amount = params.get('amount') || '2000';
+        const name = params.get('customer') || 'Merchant';
+
+        document.getElementById('upi-id').innerText = upi;
+        document.getElementById('amt').innerText = '₹' + amount;
+
+        // Standard UPI Deep Link (Mobile Apps ke liye)
+        const upiLink = `upi://pay?pa=${upi}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR`;
+        document.getElementById('pay-btn').href = upiLink;
+
+        // Browser users ke liye runtime par secure QR code generate karna
+        document.getElementById('qr-img').src = `https://qrserver.com{encodeURIComponent(upiLink)}`;
+    </script>
+
+</body>
+</html>
